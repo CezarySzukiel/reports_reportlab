@@ -1,3 +1,4 @@
+
 from pathlib import Path
 from typing import ClassVar
 
@@ -26,10 +27,7 @@ class FontSpec(BaseModel):
     ```
     """
 
-    model_config = ConfigDict(
-        frozen=True,  # dzięki temu obiekty są niemutowalne
-        extra="forbid",  # dzięki temu nie można dodać dodatkowych pól
-    )
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     _ALLOWED_EXTENSIONS: ClassVar[set[str]] = {".ttf", ".otf", ".ttc"}
 
@@ -43,7 +41,6 @@ class FontSpec(BaseModel):
         ),
         examples=["Roboto-Light-Italic", "Inter-Regular"],
     )
-
     file_path: Path = Field(
         ...,
         title="Font file path",
@@ -75,15 +72,15 @@ class FontSpec(BaseModel):
             ValueError: If the file does not exist, is not a file, or has
             an unsupported extension.
         """
-        normalized = v.expanduser().resolve()  # v - obiekt klasy Path, expanduser() rozwija ~ do katalogu domowego
+        normalized = v.expanduser().resolve()
 
-        if not normalized.exists():  # sprawdzenie czy ścieżka istnieje
+        if not normalized.exists():
             raise ValueError(f"Font file does not exist: {normalized}")
-        if not normalized.is_file():  # sprawdzenie czy ścieżka jest plikiem
+        if not normalized.is_file():
             raise ValueError(f"Path is not a file: {normalized}")
 
-        ext = normalized.suffix.lower()  # zamienia rozszerzenie na małe litery
-        if ext not in cls._ALLOWED_EXTS:  # sprawdzenie czy rozszerzenie jest dozwolone
-            raise ValueError(f"Unsupported font extension '{ext}'. Allowed: {sorted(cls._ALLOWED_EXTS)}")
+        ext = normalized.suffix.lower()
+        if ext not in cls._ALLOWED_EXTENSIONS:
+            raise ValueError(f"Unsupported font extension '{ext}'. Allowed: {sorted(cls._ALLOWED_EXTENSIONS)}")
 
         return normalized

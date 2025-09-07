@@ -70,7 +70,7 @@ def make_styles(
     - ``alignment`` must be one of ``TA_LEFT``, ``TA_RIGHT``, ``TA_CENTER``, ``TA_JUSTIFY``.
     """
     styles_in = base if base else getSampleStyleSheet()
-    styles = _clone_stylesheet(styles_in)
+    styles = styles_in
 
     if not overrides:
         return styles
@@ -80,8 +80,9 @@ def make_styles(
             if not create_missing:
                 log.warning("Style '%s' not found; skipping overrides.", style_name)
                 continue
+
             try:
-                parent: ParagraphStyle = cast(ParagraphStyle, styles[parent_for_new])  # may raise KeyError
+                parent: ParagraphStyle = cast(ParagraphStyle, styles[parent_for_new])
             except KeyError:
                 raise KeyError(
                     f"Parent style '{parent_for_new}' not found; cannot create new style '{style_name}'."
@@ -90,7 +91,7 @@ def make_styles(
             styles.add(new_style)
             log.info("Created new style '%s' inheriting from '%s'.", style_name, parent_for_new)
 
-        style: ParagraphStyle = cast(ParagraphStyle, styles[style_name])
+        style: ParagraphStyle = cast(ParagraphStyle, styles[parent_for_new])
         _apply_style_overrides(style, attrs)
 
     return styles
@@ -99,7 +100,7 @@ def make_styles(
 def _clone_stylesheet(ss: StyleSheet1) -> StyleSheet1:
     """Deep-clone a StyleSheet1, preserving byName registry."""
     clone: StyleSheet1 = copy.deepcopy(ss)
-    assert isinstance(clone.byName, MutableMapping)  # noqa: S101,0
+    assert isinstance(clone.byName, MutableMapping)  # noqa: S101
     return clone
 
 

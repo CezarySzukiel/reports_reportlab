@@ -1,10 +1,11 @@
+
 import logging
 from pathlib import Path
 
 from reportlab.lib.utils import ImageReader
 from reportlab.platypus import Image
 
-log = logging.logger(__name__)
+log = logging.getLogger(__name__)
 
 
 def scaled_image_flowable(img_path: Path, *, max_height: float, upscale: bool = False) -> Image | None:
@@ -42,6 +43,7 @@ def scaled_image_flowable(img_path: Path, *, max_height: float, upscale: bool = 
     if not img_path.exists():
         log.warning("Image file not found: %s", img_path)
         return None
+
     try:
         img = ImageReader(img_path.as_posix())
         iw, ih = img.getSize()
@@ -50,13 +52,14 @@ def scaled_image_flowable(img_path: Path, *, max_height: float, upscale: bool = 
         return None
 
     if iw <= 0 or ih <= 0:
-        log.error("Invalid image dimensions for %s: width=%s, height=%s", img_path, iw, ih)
+        log.error("Image has invalid dimensions (%sx%s): %s", iw, ih, img_path)
         return None
 
     if not upscale and ih < max_height:
         scale = 1.0
     else:
         scale = max_height / float(ih)
+
     new_width = iw * scale
     new_height = ih * scale
 
@@ -70,4 +73,4 @@ def scaled_image_flowable(img_path: Path, *, max_height: float, upscale: bool = 
         new_height,
     )
 
-    return Image(img_path.as_posix(), width=new_width, height=new_height)
+    return Image(img_path.as_posix(), new_width, new_height)
