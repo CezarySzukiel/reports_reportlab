@@ -75,9 +75,7 @@ class FontSpec(BaseModel):
             ValueError: If the file does not exist, is not a file, or has
             an unsupported extension.
         """
-        normalized = (
-            v.expanduser().resolve()
-        )  # v - obiekt klasy Path, expanduser() rozwija ~ do katalogu domowego
+        normalized = v.expanduser().resolve()  # v - obiekt klasy Path, expanduser() rozwija ~ do katalogu domowego
 
         if not normalized.exists():  # sprawdzenie czy ścieżka istnieje
             raise ValueError(f"Font file does not exist: {normalized}")
@@ -86,8 +84,6 @@ class FontSpec(BaseModel):
 
         ext = normalized.suffix.lower()  # zamienia rozszerzenie na małe litery
         if ext not in cls._ALLOWED_EXTS:  # sprawdzenie czy rozszerzenie jest dozwolone
-            raise ValueError(
-                f"Unsupported font extension '{ext}'. Allowed: {sorted(cls._ALLOWED_EXTS)}"
-            )
+            raise ValueError(f"Unsupported font extension '{ext}'. Allowed: {sorted(cls._ALLOWED_EXTS)}")
 
         return normalized

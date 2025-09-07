@@ -1,6 +1,7 @@
-from reportlab.lib.pagesizes import landscape, A4, LETTER
-from reportlab.lib.units import mm, cm, inch
+from reportlab.lib.pagesizes import A4, LETTER, landscape
+from reportlab.lib.units import cm, inch, mm
 from reportlab.pdfgen import canvas
+
 from src.config import ASSETS_PATH
 
 c = canvas.Canvas(str(ASSETS_PATH / "pages_units.pdf"), pagesize=landscape(A4))
